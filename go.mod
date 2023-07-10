@@ -4,7 +4,10 @@ replace github.com/andrewarrow/feedback => /Users/aa/os/feedback
 
 go 1.19
 
-require github.com/andrewarrow/feedback v0.0.0-20230710141154-76cf4030e7a1
+require (
+	github.com/andrewarrow/feedback v0.0.0-20230710141154-76cf4030e7a1
+	github.com/gorilla/websocket v1.5.0
+)
 
 require (
 	github.com/brianvoe/gofakeit/v6 v6.20.1 // indirect

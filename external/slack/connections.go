@@ -8,7 +8,7 @@ import (
 
 // https://slack.com/api/apps.connections.open
 
-func ConnectionsOpen() string {
+func ConnectionsOpen() (string, string) {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println("Recovered from panic:", r)
@@ -20,5 +20,5 @@ func ConnectionsOpen() string {
 	fmt.Println(jsonString, code)
 	var m map[string]any
 	json.Unmarshal([]byte(jsonString), &m)
-	return m["url"].(string)
+	return m["url"].(string), m["app_id"].(string)
 }
