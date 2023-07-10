@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"ss/network"
+	"strings"
 )
 
 // https://slack.com/api/apps.connections.open
@@ -20,5 +21,9 @@ func ConnectionsOpen() (string, string) {
 	fmt.Println(jsonString, code)
 	var m map[string]any
 	json.Unmarshal([]byte(jsonString), &m)
-	return m["url"].(string), m["app_id"].(string)
+	url := m["url"].(string)
+	tokens := strings.Split(url, "app_id=")
+	appId := tokens[len(tokens)-1]
+
+	return url, appId
 }
