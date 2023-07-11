@@ -1,7 +1,7 @@
 ss
-python/geckodriver.log
 go.sum
 fred
+geckodriver.log
 jenny
 .DS_Store
 .parentlock
