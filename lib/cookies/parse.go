@@ -17,6 +17,10 @@ func Parse(filename string) {
 		}
 		name := tokens[0]
 		value := tokens[1]
-		fmt.Println(name, value)
+		escapedName := strings.Replace(name, `"`, `\"`, -1)
+		escapedValue := strings.Replace(value, `"`, `\"`, -1)
+
+		format := `c = Cookie{"%s","%s"}`
+		fmt.Println(fmt.Sprintf(format, escapedName, escapedValue))
 	}
 }
