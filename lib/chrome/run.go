@@ -20,7 +20,8 @@ func Run() {
 	err := chromedp.Run(ctx,
 		chromedp.Navigate(url),
 		chromedp.WaitReady("body"),
-		chromedp.Nodes("//p[text()] | //li[text()]", &res),
+		//		chromedp.Nodes("//p[text()] | //li[text()]", &res),
+		chromedp.Nodes("//*", &res),
 	)
 	if err != nil {
 		log.Fatal(err)

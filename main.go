@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"os"
 	"ss/external/slack"
+	"ss/lib/chrome"
 	"time"
 
 	"github.com/andrewarrow/feedback/router"
@@ -37,6 +38,7 @@ func main() {
 		}
 	} else if arg == "test" {
 		//slack.PostMessage("C05G01UFYMU", "test")
+		chrome.Run()
 	}
 
 	select {}
