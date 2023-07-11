@@ -4,23 +4,31 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/chromedp/cdproto/cdp"
+	"github.com/chromedp/cdproto/network"
+	"github.com/chromedp/cdproto/storage"
 	"github.com/chromedp/chromedp"
 )
 
 func Run(email string) {
-	url := "https://manypw.slack.com/"
+	url := "https://manypw.slack.com/client"
 
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
 
 	var res []*cdp.Node
-	err := chromedp.Run(ctx,
-		submit(url, `//input[@name="email"]`, email, res))
-	if err != nil {
-		log.Fatal(err)
-	}
+
+	chromedp.Run(ctx, setcookies(
+		url,
+		"cookie1", "value1",
+	))
+
+	time.Sleep(time.Second)
+	chromedp.Run(ctx,
+		chromedp.Nodes("//*", &res),
+	)
 
 	for _, item := range res {
 
@@ -31,15 +39,61 @@ func Run(email string) {
 		fmt.Println(innerHTML)
 	}
 
+	/*
+		fmt.Println("1")
+		chromedp.Run(ctx,
+			chromedp.Navigate(url),
+		)
+		fmt.Println("2")
+		time.Sleep(time.Second)
+		sel := `//input[@name='email']`
+		chromedp.Run(ctx,
+			chromedp.SetValue(sel, email, chromedp.BySearch),
+			//chromedp.SendKeys(sel, email),
+			chromedp.Click(`//button[@id='submit_btn']`),
+		)
+		fmt.Println("3")
+		//chromedp.Run(ctx,
+		//	chromedp.Click(`//button[@id='submit_btn']`),
+		//)
+		fmt.Println("4")
+		//chromedp.Submit(sel).Do(ctx)
+		//chromedp.WaitReady("body").Do(ctx)
+
+	*/
 }
 
-func submit(urlstr, sel, q string, res []*cdp.Node) chromedp.Tasks {
+func setcookies(host string, cookies ...string) chromedp.Tasks {
+	if len(cookies)%2 != 0 {
+		panic("length of cookies must be divisible by 2")
+	}
 	return chromedp.Tasks{
-		chromedp.Navigate(urlstr),
-		chromedp.WaitVisible(sel),
-		chromedp.SendKeys(sel, q),
-		chromedp.Submit(sel),
-		chromedp.WaitReady("body"),
-		chromedp.Nodes("//*", &res),
+		chromedp.ActionFunc(func(ctx context.Context) error {
+			expr := cdp.TimeSinceEpoch(time.Now().Add(180 * 24 * time.Hour))
+			for i := 0; i < len(cookies); i += 2 {
+				err := network.SetCookie(cookies[i], cookies[i+1]).
+					WithExpires(&expr).
+					WithDomain("localhost").
+					WithHTTPOnly(true).
+					Do(ctx)
+				if err != nil {
+					return err
+				}
+			}
+			return nil
+		}),
+		chromedp.Navigate(host),
+		chromedp.ActionFunc(func(ctx context.Context) error {
+			cookies, err := storage.GetCookies().Do(ctx)
+			if err != nil {
+				return err
+			}
+
+			for i, cookie := range cookies {
+				log.Printf("chrome cookie %d: %+v", i, cookie)
+			}
+
+			return nil
+		}),
 	}
 }
