@@ -2,7 +2,6 @@ package websocket
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 
 	"github.com/gorilla/websocket"
@@ -47,7 +46,7 @@ func (s *SystemWs) SendSlack(token, user, channel string) {
 	authMessage["token"] = token
 	asBytes, _ := json.Marshal(authMessage)
 
-	fmt.Println(string(asBytes))
+	//	fmt.Println(string(asBytes))
 
 	err := s.Conn.WriteMessage(websocket.TextMessage, asBytes)
 	if err != nil {
@@ -57,11 +56,15 @@ func (s *SystemWs) SendSlack(token, user, channel string) {
 	message := map[string]string{}
 	message["type"] = "message"
 	message["channel"] = channel
+	message["app"] = s.AppId
+	message["app_id"] = s.AppId
+	message["user_id"] = user
 	message["user"] = user
 	message["text"] = "test123"
+	message["token"] = token
 	asBytes, _ = json.Marshal(message)
 
-	fmt.Println(string(asBytes))
+	//	fmt.Println(string(asBytes))
 
 	err = s.Conn.WriteMessage(websocket.TextMessage, asBytes)
 	if err != nil {
