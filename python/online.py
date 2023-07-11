@@ -13,19 +13,21 @@ browser = webdriver.Firefox(options=options)
 print("read")
 
 with open('local_storage_data.txt', 'r') as file:
-    local_storage_data = file.read()
+    json_data = file.read()
 
-# Load session cookies from the file (optional)
+local_storage_data = json.loads(json_data)
+
+browser.execute_script(f"window.localStorage.clear();")
+for key, value in local_storage_data.items():
+    script = f"window.localStorage.setItem('{key}', '{value}');"
+    browser.execute_script(script)
+
 with open('session_cookies.txt', 'r') as file:
     session_cookies = []
     for line in file:
         name, value = line.strip().split('=')
         cookie = {'name': name, 'value': value}
         session_cookies.append(cookie)
-
-
-browser.execute_script(f"window.localStorage.clear();")
-browser.execute_script(f"window.localStorage.setItem('yourDataKey', '{local_storage_data}');")
 
 for cookie in session_cookies:
     browser.add_cookie(cookie)
