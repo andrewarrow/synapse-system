@@ -19,7 +19,7 @@ type Cookie struct {
 }
 
 func Run(email string) {
-	url := "https://manypw.slack.com/client"
+	url := "https://app.slack.com/client"
 
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
