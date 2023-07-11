@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"os"
 	"ss/external/slack"
-	"ss/lib/chrome"
+	"ss/lib/chat"
 	"time"
 
 	"github.com/andrewarrow/feedback/router"
@@ -27,20 +27,9 @@ func main() {
 	r := router.NewRouter("DATABASE_URL", embeddedFile)
 	if arg == "init" {
 	} else if arg == "run" {
-		users := r.All("user", "order by created_at", "")
-		for _, user := range users {
-			token := user["slack_token"].(string)
-			slackUser := user["slack_user"].(string)
-			_, _ = token, slackUser
-			//slack.SetPresence(token, slackUser)
-			//slack.RtmConnect(token, slackUser)
-			//slack.PostMessage(token, "C05G01UFYMU", "test")
-		}
+		chat.Run(r)
 	} else if arg == "test" {
 		//slack.PostMessage("C05G01UFYMU", "test")
-		email := os.Args[2]
-		chrome.Run(email)
-		//cookies.Parse("ttt")
 	}
 
 	select {}
