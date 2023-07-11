@@ -9,20 +9,15 @@ import (
 	"github.com/chromedp/chromedp"
 )
 
-func Run() {
-	url := "https://manypw.slack.com/client"
+func Run(email string) {
+	url := "https://manypw.slack.com/"
 
 	ctx, cancel := chromedp.NewContext(context.Background())
 	defer cancel()
 
-	// run task list
 	var res []*cdp.Node
 	err := chromedp.Run(ctx,
-		chromedp.Navigate(url),
-		chromedp.WaitReady("body"),
-		//		chromedp.Nodes("//p[text()] | //li[text()]", &res),
-		chromedp.Nodes("//*", &res),
-	)
+		submit(url, `//input[@name="email"]`, email, res))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -33,7 +28,18 @@ func Run() {
 		chromedp.Run(ctx,
 			chromedp.InnerHTML(item.FullXPath(), &innerHTML),
 		)
-
 		fmt.Println(innerHTML)
+	}
+
+}
+
+func submit(urlstr, sel, q string, res []*cdp.Node) chromedp.Tasks {
+	return chromedp.Tasks{
+		chromedp.Navigate(urlstr),
+		chromedp.WaitVisible(sel),
+		chromedp.SendKeys(sel, q),
+		chromedp.Submit(sel),
+		chromedp.WaitReady("body"),
+		chromedp.Nodes("//*", &res),
 	}
 }

@@ -38,7 +38,8 @@ func main() {
 		}
 	} else if arg == "test" {
 		//slack.PostMessage("C05G01UFYMU", "test")
-		chrome.Run()
+		email := os.Args[2]
+		chrome.Run(email)
 	}
 
 	select {}
