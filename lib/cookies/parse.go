@@ -22,5 +22,6 @@ func Parse(filename string) {
 
 		format := `c = Cookie{"%s","%s"}`
 		fmt.Println(fmt.Sprintf(format, escapedName, escapedValue))
+		fmt.Println("cookies = append(cookies, c)")
 	}
 }

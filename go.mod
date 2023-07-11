@@ -12,6 +12,7 @@ require (
 )
 
 require (
+	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/brianvoe/gofakeit/v6 v6.20.1 // indirect
 	github.com/chromedp/sysutil v1.0.0 // indirect
 	github.com/gobwas/httphead v0.1.0 // indirect
@@ -22,6 +23,7 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/lib/pq v1.2.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
+	github.com/tebeka/selenium v0.9.9 // indirect
 	github.com/xeonx/timeago v1.0.0-rc5 // indirect
 	golang.org/x/crypto v0.8.0 // indirect
 	golang.org/x/sys v0.7.0 // indirect
