@@ -12,6 +12,12 @@ import (
 	"github.com/chromedp/chromedp"
 )
 
+type Cookie struct {
+	Name   string
+	Value  string
+	Domain string
+}
+
 func Run(email string) {
 	url := "https://manypw.slack.com/client"
 
@@ -19,10 +25,11 @@ func Run(email string) {
 	defer cancel()
 
 	var res []*cdp.Node
+	cookies := []Cookie{}
 
 	chromedp.Run(ctx, setcookies(
 		url,
-		"cookie1", "value1",
+		cookies,
 	))
 
 	time.Sleep(time.Second)
@@ -63,17 +70,14 @@ func Run(email string) {
 	*/
 }
 
-func setcookies(host string, cookies ...string) chromedp.Tasks {
-	if len(cookies)%2 != 0 {
-		panic("length of cookies must be divisible by 2")
-	}
+func setcookies(host string, cookies []Cookie) chromedp.Tasks {
 	return chromedp.Tasks{
 		chromedp.ActionFunc(func(ctx context.Context) error {
-			expr := cdp.TimeSinceEpoch(time.Now().Add(180 * 24 * time.Hour))
-			for i := 0; i < len(cookies); i += 2 {
-				err := network.SetCookie(cookies[i], cookies[i+1]).
-					WithExpires(&expr).
-					WithDomain("localhost").
+			//expr := cdp.TimeSinceEpoch(time.Now().Add(180 * 24 * time.Hour))
+			for _, cookie := range cookies {
+				err := network.SetCookie(cookie.Name, cookie.Value).
+					//WithExpires(&expr).
+					WithDomain(cookie.Domain).
 					WithHTTPOnly(true).
 					Do(ctx)
 				if err != nil {
