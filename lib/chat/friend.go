@@ -35,7 +35,7 @@ func (f *Friend) OnlineOffline() {
 		seconds := fmt.Sprintf("%d", intSeconds)
 		fmt.Println(f.Path, seconds)
 		go turnGreenLightOn(f.Path, seconds)
-		go f.DoStuffWhileOnline(time.Now().Unix() + intSeconds)
+		go f.DoStuffWhileOnline(time.Now().Unix() + int64(intSeconds))
 		time.Sleep(time.Second * time.Duration(intSeconds))
 	}
 }
@@ -44,9 +44,10 @@ func (f *Friend) DoStuffWhileOnline(endAt int64) {
 	intSeconds := rand.Intn(10) + 6
 	time.Sleep(time.Second * time.Duration(intSeconds))
 	for {
-		f.PostInGeneral()
-		intSeconds := rand.Intn(100) + 6
-		time.Sleep(time.Second * time.Duration(intSeconds))
+		if rand.Intn(100) == 33 {
+			go f.PostInGeneral()
+		}
+		time.Sleep(time.Second)
 		if time.Now().Unix() > endAt {
 			break
 		}
