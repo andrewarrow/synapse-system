@@ -44,6 +44,8 @@ func Run(r *router.Router) {
 	for _, user := range users {
 		friend := NewFriend(user)
 		go friend.OnlineOffline()
+		intSeconds := rand.Intn(10) + 6
+		time.Sleep(time.Second * time.Duration(intSeconds))
 	}
 }
 
