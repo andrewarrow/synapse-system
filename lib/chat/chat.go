@@ -2,30 +2,53 @@ package chat
 
 import (
 	"fmt"
+	"math/rand"
 	"os/exec"
 	"strings"
+	"time"
 
 	"github.com/andrewarrow/feedback/router"
 )
 
-func Run(r *router.Router) {
-	users := r.All("user", "order by created_at", "")
-	for _, user := range users {
-		fullName := user["full_name"].(string)
-		path := firstNameLower(fullName)
-		fmt.Println(fullName, path)
-		go turnGreenLightOn(path)
-		token := user["slack_token"].(string)
-		slackUser := user["slack_user"].(string)
-		_, _ = token, slackUser
-		//slack.SetPresence(token, slackUser)
-		//slack.RtmConnect(token, slackUser)
-		//slack.PostMessage(token, "C05G01UFYMU", "test")
+type Friend struct {
+	Path     string
+	FullName string
+}
+
+func NewFriend(user map[string]any) *Friend {
+	f := Friend{}
+	f.FullName = user["full_name"].(string)
+	f.Path = firstNameLower(f.FullName)
+	//fmt.Println(fullName, path)
+	//token := user["slack_token"].(string)
+	//slackUser := user["slack_user"].(string)
+	//_, _ = token, slackUser
+	//slack.SetPresence(token, slackUser)
+	//slack.RtmConnect(token, slackUser)
+	//slack.PostMessage(token, "C05G01UFYMU", "test")
+	return &f
+}
+
+func (f *Friend) OnlineOffline() {
+	for {
+		intSeconds := rand.Intn(43200) + 900
+		seconds := fmt.Sprintf("%d", intSeconds)
+		fmt.Println(f.Path, seconds)
+		go turnGreenLightOn(f.Path, seconds)
+		time.Sleep(time.Second * time.Duration(intSeconds))
 	}
 }
 
-func turnGreenLightOn(path string) {
-	b, err := exec.Command("python3", "python/online.py", "python/"+path, "26").CombinedOutput()
+func Run(r *router.Router) {
+	users := r.All("user", "order by created_at", "")
+	for _, user := range users {
+		friend := NewFriend(user)
+		go friend.OnlineOffline()
+	}
+}
+
+func turnGreenLightOn(path, seconds string) {
+	b, err := exec.Command("python3", "python/online.py", "python/"+path, seconds).CombinedOutput()
 	fmt.Println(string(b), err)
 }
 
