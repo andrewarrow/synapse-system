@@ -17,5 +17,7 @@ func PostMessage(token, id, text string) {
 	payload := map[string]any{"channel": id, "text": text}
 	jsonString, code := network.PostTo("https://slack.com/api/chat.postMessage",
 		token, payload)
-	fmt.Println(jsonString, code)
+	if code != 200 {
+		fmt.Println(jsonString, code)
+	}
 }
