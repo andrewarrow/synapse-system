@@ -3,22 +3,23 @@ package chat
 import (
 	"fmt"
 	"math/rand"
+	"ss/external/openai"
 	"ss/external/slack"
 	"time"
-
-	"github.com/brianvoe/gofakeit"
 )
 
 type Friend struct {
 	Path     string
 	FullName string
 	Token    string
+	Bio      string
 }
 
 func NewFriend(user map[string]any) *Friend {
 	f := Friend{}
 	f.FullName = user["full_name"].(string)
 	f.Path = firstNameLower(f.FullName)
+	f.Bio = user["bio"].(string)
 	//fmt.Println(fullName, path)
 	f.Token = user["slack_token"].(string)
 	//slackUser := user["slack_user"].(string)
@@ -57,6 +58,6 @@ func (f *Friend) DoStuffWhileOnline(endAt int64) {
 }
 
 func (f *Friend) PostInGeneral() {
-	txt := gofakeit.HackerPhrase()
+	txt := openai.SlackMessageFromBio(f.Bio)
 	slack.PostMessage(f.Token, "C05G01UFYMU", txt)
 }
