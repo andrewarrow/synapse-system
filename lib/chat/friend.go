@@ -37,6 +37,8 @@ func (f *Friend) OnlineOffline() {
 		go turnGreenLightOn(f.Path, seconds)
 		go f.DoStuffWhileOnline(time.Now().Unix() + int64(intSeconds))
 		time.Sleep(time.Second * time.Duration(intSeconds))
+		intSeconds = rand.Intn(21600) + 900
+		time.Sleep(time.Second * time.Duration(intSeconds))
 	}
 }
 
