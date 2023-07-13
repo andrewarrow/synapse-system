@@ -6,7 +6,8 @@ import sys
 path = sys.argv[1]
 timeString = sys.argv[2]
 options = Options()
-options.profile = path
+options.add_argument("-profile")
+options.add_argument(path)
 options.add_argument('-headless')
 browser = webdriver.Firefox(options=options)
 browser.get('https://app.slack.com/client')
