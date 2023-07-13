@@ -19,7 +19,7 @@ func SlackMessageFromBio(bio string) string {
 
 func makePayloadForBio(bio string) map[string]any {
 	messages := makeListOfMessages(bio)
-	m := map[string]any{"model": "gpt-4",
+	m := map[string]any{"model": "gpt-3.5-turbo",
 		"messages": messages}
 	return m
 }
