@@ -10,3 +10,5 @@ wasn't personal but all of a sudden I was removed and I missed it. I missed
 the channel where I would post a nice little update of everything I did and get
 rockets, confetti, 100% or fire emoji responses + some actual english "wow!" or
 "that's great!" replies.
+
+[Read More](https://many.pw/synapse)

@@ -26,6 +26,10 @@
           "flavor": "name"
         },
         {
+          "name": "bio",
+          "flavor": "text"
+        },
+        {
           "name": "password",
           "flavor": "fewWords",
           "index": "",
