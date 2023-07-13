@@ -18,7 +18,18 @@ func SlackMessageFromBio(bio string) string {
 }
 
 func makePayloadForBio(bio string) map[string]any {
-	return nil
+	messages := makeListOfMessages(bio)
+	m := map[string]any{"model": "gpt-4",
+		"messages": messages}
+	return m
+}
+
+func makeListOfMessages(bio string) []any {
+	system := map[string]any{"content": "you are pretending to be a human. Their biography is " + bio, "role": "system"}
+	user := map[string]any{"content": "make a work related slack message from the human you are pretending to be", "role": "user"}
+
+	list := []any{system, user}
+	return list
 }
 
 func parseOpenAiJson(jsonString string) string {
