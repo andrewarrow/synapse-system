@@ -14,7 +14,7 @@ func SlackMessageFromBio(bio string) string {
 		fmt.Println(jsonString, code)
 		return ""
 	}
-	return parseOpenAiJson(jsonString)
+	return parseJson(jsonString)
 }
 
 func makePayloadForBio(bio string) map[string]any {
