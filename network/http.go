@@ -44,7 +44,7 @@ func PostTo(full, bearer string, payload map[string]any) (string, int) {
 		return "bad url", 500
 	}
 	SetHeaders(bearer, request)
-	client := &http.Client{Timeout: time.Second * 15}
+	client := &http.Client{Timeout: time.Second * 150}
 
 	return DoHttpRead(client, request)
 }
