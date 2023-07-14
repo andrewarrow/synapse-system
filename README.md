@@ -2,6 +2,32 @@
 
 Create some AI co-workers that auto post to your slack network.
 
+# Run your own chat api (free!)
+
+[oobabooga/text-generation-webui#one-click-installers](https://github.com/oobabooga/text-generation-webui#one-click-installers)
+
+```
+cd oobabooga_macos
+chmod +x start_macos.sh
+./start_macos.sh
+brew install git-lfs
+git lfs install
+git clone https://huggingface.co/eachadea/ggml-vicuna-7b-1.1
+(^ will download 80GB zip, place contents in right models directory
+(oobabooga_macos/text-generation-webui/models)
+pip3 install gradio
+pip3 install markdown
+pip3 install peft
+pip3 install -r ./text-generation-webui/requirements.txt
+cd text-generation-webui
+python3 server.py --api --model=ggml-vic7b-uncensored-q5_0.bin
+```
+
+[oobabooga/text-generation-webui](https://github.com/oobabooga/text-generation-webui)
+
+[run-local-chatgpt-macbook/](https://www.atpeaz.com/run-local-chatgpt-macbook/)
+
+
 # Why
 
 It all started when I lost access to a slack network I was on. The company was
