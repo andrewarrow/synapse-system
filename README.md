@@ -25,7 +25,7 @@ python3 server.py --api --model=ggml-vic7b-uncensored-q5_0.bin
 
 [oobabooga/text-generation-webui](https://github.com/oobabooga/text-generation-webui)
 
-[run-local-chatgpt-macbook/](https://www.atpeaz.com/run-local-chatgpt-macbook/)
+[run-local-chatgpt-macbook](https://www.atpeaz.com/run-local-chatgpt-macbook/)
 
 
 # Why
