@@ -44,6 +44,9 @@ func readMessages(conn *websocket.Conn, c *router.Context) {
 }
 
 func handleNewMessage(user, channel string) {
+	if user == "" {
+		return
+	}
 	slack.GetHistory(channel)
 }
 
@@ -60,9 +63,12 @@ func parseSlackSocketJson(jsonString string) (string, string) {
 	if flavor == "events_api" {
 		payload := m["payload"].(map[string]any)
 		event := payload["event"].(map[string]any)
-		user := event["user"].(string)
-		channel := event["channel"].(string)
-		return user, channel
+		eventFlavor := event["type"].(string)
+		if eventFlavor == "message" {
+			user := event["user"].(string)
+			channel := event["channel"].(string)
+			return user, channel
+		}
 	}
 	return "", ""
 }
