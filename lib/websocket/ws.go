@@ -37,11 +37,10 @@ func readMessages(conn *websocket.Conn, c *router.Context) {
 			return
 		}
 		jsonString := string(message)
-		event := parseSlackSocketJson(jsonString)
+		event, eventId := parseSlackSocketJson(jsonString)
 		if event == nil {
 			continue
 		}
-		eventId := event["event_id"].(string)
 		c.Params = map[string]any{}
 		c.Params["id_event"] = eventId
 		msg := c.Insert("slack_event")
@@ -63,7 +62,7 @@ func handleNewMessage(user, channel string) {
 	//slack.GetHistory(channel)
 }
 
-func parseSlackSocketJson(jsonString string) map[string]any {
+func parseSlackSocketJson(jsonString string) (map[string]any, string) {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println("Recovered from panic:", r)
@@ -77,7 +76,7 @@ func parseSlackSocketJson(jsonString string) map[string]any {
 	if flavor == "events_api" {
 		payload := m["payload"].(map[string]any)
 		event := payload["event"].(map[string]any)
-		return event
+		return event, payload["event_id"].(string)
 	}
-	return nil
+	return nil, ""
 }

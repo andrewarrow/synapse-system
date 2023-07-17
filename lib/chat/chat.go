@@ -21,6 +21,8 @@ func Run(r *router.Router) {
 }
 
 func turnGreenLightOn(path, seconds string) {
+}
+func turnGreenLightOn2(path, seconds string) {
 	b, err := exec.Command("python3", "python/online.py", "python/"+path, seconds).CombinedOutput()
 	fmt.Println(string(b), err)
 }
