@@ -41,6 +41,7 @@ func readMessages(conn *websocket.Conn, c *router.Context) {
 			return
 		}
 		jsonString := string(message)
+		fmt.Println(jsonString)
 		event, eventId := parseSlackSocketJson(jsonString)
 		if event == nil {
 			continue

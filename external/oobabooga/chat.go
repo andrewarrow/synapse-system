@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"ss/network"
+	"strings"
 )
 
 func GetAnswerFor(history []string, bio string) string {
@@ -61,5 +62,9 @@ func parseJson(jsonString string) string {
 	history := choice["history"].(map[string]any)
 	visible := history["visible"].([]any)
 	list := visible[len(visible)-1].([]any)
-	return list[len(list)-1].(string)
+	blob := list[len(list)-1].(string)
+	tokens := strings.Split(blob, "### Assistant: ")
+	last := tokens[len(tokens)-1]
+	tokens = strings.Split(last, "###")
+	return tokens[0]
 }
