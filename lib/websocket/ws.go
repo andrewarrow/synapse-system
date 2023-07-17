@@ -2,6 +2,7 @@ package websocket
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 
 	"github.com/gorilla/websocket"
@@ -34,41 +35,31 @@ func readMessages(conn *websocket.Conn) {
 			log.Println("Failed to read message:", err)
 			return
 		}
-		log.Println("Received message:", string(message))
+		jsonString := string(message)
+		user, channel := parseSlackSocketJson(jsonString)
+		go handleNewMessage(user, channel)
 	}
 }
 
-func (s *SystemWs) SendSlack(token, user, channel string) {
-	authMessage := map[string]string{}
-	authMessage["type"] = "auth"
-	authMessage["app_id"] = s.AppId
-	authMessage["user_id"] = user
-	authMessage["token"] = token
-	asBytes, _ := json.Marshal(authMessage)
+func handleNewMessage(user, channel string) {
+}
 
-	//	fmt.Println(string(asBytes))
+func parseSlackSocketJson(jsonString string) (string, string) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered from panic:", r)
+		}
+	}()
+	var m map[string]any
+	json.Unmarshal([]byte(jsonString), &m)
 
-	err := s.Conn.WriteMessage(websocket.TextMessage, asBytes)
-	if err != nil {
-		log.Println("Failed to send message:", err)
+	flavor := m["type"].(string)
+	if flavor == "events_api" {
+		payload := m["payload"].(map[string]any)
+		event := payload["event"].(map[string]any)
+		user := event["user"].(string)
+		channel := event["channel"].(string)
+		return user, channel
 	}
-
-	message := map[string]string{}
-	message["type"] = "message"
-	message["channel"] = channel
-	message["app"] = s.AppId
-	message["app_id"] = s.AppId
-	message["user_id"] = user
-	message["user"] = user
-	message["text"] = "test123"
-	message["token"] = token
-	asBytes, _ = json.Marshal(message)
-
-	//	fmt.Println(string(asBytes))
-
-	err = s.Conn.WriteMessage(websocket.TextMessage, asBytes)
-	if err != nil {
-		log.Println("Failed to send message:", err)
-	}
-
+	return "", ""
 }

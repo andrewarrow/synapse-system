@@ -9,6 +9,7 @@ import (
 	"ss/external/openai"
 	"ss/external/slack"
 	"ss/lib/chat"
+	"ss/lib/websocket"
 	"time"
 
 	"github.com/andrewarrow/feedback/router"
@@ -31,10 +32,13 @@ func main() {
 	r := router.NewRouter("DATABASE_URL", embeddedFile)
 	if arg == "init" {
 	} else if arg == "run" {
+		wsUrl, appId := slack.ConnectionsOpen()
+		fmt.Println(appId, wsUrl)
+		websocket.Connect(wsUrl, appId)
 		chat.Run(r)
 	} else if arg == "test" {
 		//slack.PostMessage("C05G01UFYMU", "test")
-		txt := oobabooga.SlackMessageFromBio(`Fred Clark was born in Boston, Massachusetts in 1979. He left there when he was 14 but still speaks with a Boston accent. His dad was a military man and moved around a lot, divorced from his mom Fred lived with her most of the time. He was a troubled youth, skipping school, doing drugs, but eventually at age 19 found his way with computer programming. As a high school dropout he had some trouble at first getting jobs, but his skills as a coder made him desirable to hire. By age 24 he was leading teams at top silicon valley tech startups. Today he works for many.pw as a software engineer writing mainly in the language go and python. He has a wicked smart sense of humor and loves to post funny things in slack when the time is right. He also works very hard and does not post too much.`)
+		txt := oobabooga.SlackMessageFromBio(`Jenny Wey was born in London and lived there until the age of 24 when she moved to New York City with her fiancé mainly for his job. After just a year they broke up but she fell in love with the city and stayed there. Having an ocean between her and her family back home was actually nice for her. It created sound good boundaries and let her live her own life. She got into project management for tech companies and learned how to work with software developers very well. She does not know how to code anything herself but she understands the process and the terms and knows how to set direction and get the product from point A to point B as quickly as possible. Part of this is having fun on slack and just chatting with the team to make them feel relaxed and having fun at work. But there is a balance she is great at. She does not post too much in slack, just the right amount.`)
 		fmt.Println(txt)
 
 	}
