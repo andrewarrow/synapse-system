@@ -34,7 +34,7 @@ func main() {
 	} else if arg == "run" {
 		wsUrl, appId := slack.ConnectionsOpen()
 		fmt.Println(appId, wsUrl)
-		websocket.Connect(wsUrl, appId)
+		websocket.Connect(wsUrl, appId, r.ToContext())
 		chat.Run(r)
 	} else if arg == "test" {
 		//slack.PostMessage("C05G01UFYMU", "test")

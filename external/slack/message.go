@@ -5,14 +5,6 @@ import (
 	"ss/network"
 )
 
-/*
-curl -X POST -H "Authorization: Bearer YOUR_ACCESS_TOKEN" -H "Content-Type: application/json" -d '{
-  "channel": "CHANNEL_ID",
-  "text": "Your message"
-}' https://slack.com/api/chat.postMessage
-
-*/
-
 func PostMessage(token, id, text string) {
 	payload := map[string]any{"channel": id, "text": text}
 	jsonString, code := network.PostTo("https://slack.com/api/chat.postMessage",
@@ -20,4 +12,13 @@ func PostMessage(token, id, text string) {
 	if code != 200 {
 		fmt.Println(jsonString, code)
 	}
+}
+func GetHistory(id string) {
+	payload := map[string]any{"channel": id, "limit": 30}
+	jsonString, code := network.PostTo("https://slack.com/api/conversations.history",
+		apiKey, payload)
+	if code != 200 {
+		fmt.Println(jsonString, code)
+	}
+	fmt.Println(jsonString, code)
 }

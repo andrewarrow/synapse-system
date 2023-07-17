@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"ss/external/slack"
 
+	"github.com/andrewarrow/feedback/router"
 	"github.com/gorilla/websocket"
 )
 
@@ -13,7 +15,7 @@ type SystemWs struct {
 	AppId string
 }
 
-func Connect(socketURL, appId string) *SystemWs {
+func Connect(socketURL, appId string, c *router.Context) *SystemWs {
 	s := SystemWs{}
 	var err error
 	s.Conn, _, err = websocket.DefaultDialer.Dial(socketURL, nil)
@@ -23,12 +25,12 @@ func Connect(socketURL, appId string) *SystemWs {
 	}
 	s.AppId = appId
 
-	go readMessages(s.Conn)
+	go readMessages(s.Conn, c)
 
 	return &s
 }
 
-func readMessages(conn *websocket.Conn) {
+func readMessages(conn *websocket.Conn, c *router.Context) {
 	for {
 		_, message, err := conn.ReadMessage()
 		if err != nil {
@@ -42,6 +44,7 @@ func readMessages(conn *websocket.Conn) {
 }
 
 func handleNewMessage(user, channel string) {
+	slack.GetHistory(channel)
 }
 
 func parseSlackSocketJson(jsonString string) (string, string) {
