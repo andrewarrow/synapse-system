@@ -38,6 +38,9 @@ func readMessages(conn *websocket.Conn, c *router.Context) {
 		}
 		jsonString := string(message)
 		event := parseSlackSocketJson(jsonString)
+		if event == nil {
+			continue
+		}
 		eventId := event["event_id"].(string)
 		c.Params = map[string]any{}
 		c.Params["id_event"] = eventId
