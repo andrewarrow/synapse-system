@@ -41,7 +41,7 @@ func readMessages(conn *websocket.Conn, c *router.Context) {
 			return
 		}
 		jsonString := string(message)
-		fmt.Println(jsonString)
+		//fmt.Println(jsonString)
 		event, eventId := parseSlackSocketJson(jsonString)
 		if event == nil {
 			continue
@@ -52,7 +52,10 @@ func readMessages(conn *websocket.Conn, c *router.Context) {
 		if msg == "" {
 			eventFlavor := event["type"].(string)
 			if eventFlavor == "message" {
-				user := event["user"].(string)
+				user, ok := event["user"].(string)
+				if !ok {
+					continue
+				}
 				channel := event["channel"].(string)
 				go handleNewMessage(user, channel, users)
 			}

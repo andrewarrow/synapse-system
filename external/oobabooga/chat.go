@@ -63,8 +63,7 @@ func parseJson(jsonString string) string {
 	visible := history["visible"].([]any)
 	list := visible[len(visible)-1].([]any)
 	blob := list[len(list)-1].(string)
-	tokens := strings.Split(blob, "### Assistant: ")
-	last := tokens[len(tokens)-1]
-	tokens = strings.Split(last, "###")
-	return tokens[0]
+	fmt.Println(blob)
+	tokens := strings.Split(blob, `"`)
+	return tokens[1]
 }
