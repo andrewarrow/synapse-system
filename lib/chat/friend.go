@@ -3,7 +3,10 @@ package chat
 import (
 	"fmt"
 	"math/rand"
+	"ss/external/slack"
 	"time"
+
+	"github.com/brianvoe/gofakeit"
 )
 
 type Friend struct {
@@ -45,7 +48,7 @@ func (f *Friend) DoStuffWhileOnline(endAt int64) {
 	intSeconds := rand.Intn(10) + 6
 	time.Sleep(time.Second * time.Duration(intSeconds))
 	for {
-		if rand.Intn(100) == 33 {
+		if rand.Intn(200) == 33 {
 			go f.PostInGeneral()
 		}
 		time.Sleep(time.Second)
@@ -56,6 +59,6 @@ func (f *Friend) DoStuffWhileOnline(endAt int64) {
 }
 
 func (f *Friend) PostInGeneral() {
-	//txt := openai.SlackMessageFromBio(f.Bio)
-	//slack.PostMessage(f.Token, "C05G01UFYMU", txt)
+	txt := gofakeit.HackerPhrase()
+	slack.PostMessageAsRoot("C05G01UFYMU", txt)
 }
