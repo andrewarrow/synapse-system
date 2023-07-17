@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"ss/external/slack"
 
 	"github.com/andrewarrow/feedback/router"
 	"github.com/gorilla/websocket"
@@ -56,10 +57,27 @@ func readMessages(conn *websocket.Conn, c *router.Context) {
 }
 
 func handleNewMessage(user, channel string) {
-	if user == "" {
-		return
+	jsonString := slack.GetHistory(channel)
+	parseSlackHistoryJson(jsonString)
+	// messages
+}
+
+func parseSlackHistoryJson(jsonString string) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered from panic:", r)
+		}
+	}()
+	var m map[string]any
+	json.Unmarshal([]byte(jsonString), &m)
+	//fmt.Println(jsonString)
+
+	messages := m["messages"].([]any)
+	for _, thing := range messages {
+		message := thing.(map[string]any)
+		text := message["text"].(string)
+		fmt.Println(text)
 	}
-	//slack.GetHistory(channel)
 }
 
 func parseSlackSocketJson(jsonString string) (map[string]any, string) {
@@ -70,7 +88,7 @@ func parseSlackSocketJson(jsonString string) (map[string]any, string) {
 	}()
 	var m map[string]any
 	json.Unmarshal([]byte(jsonString), &m)
-	fmt.Println(jsonString)
+	//fmt.Println(jsonString)
 
 	flavor := m["type"].(string)
 	if flavor == "events_api" {

@@ -3,8 +3,6 @@ package chat
 import (
 	"fmt"
 	"math/rand"
-	"ss/external/openai"
-	"ss/external/slack"
 	"time"
 )
 
@@ -58,6 +56,6 @@ func (f *Friend) DoStuffWhileOnline(endAt int64) {
 }
 
 func (f *Friend) PostInGeneral() {
-	txt := openai.SlackMessageFromBio(f.Bio)
-	slack.PostMessage(f.Token, "C05G01UFYMU", txt)
+	//txt := openai.SlackMessageFromBio(f.Bio)
+	//slack.PostMessage(f.Token, "C05G01UFYMU", txt)
 }
