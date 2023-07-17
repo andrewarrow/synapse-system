@@ -6,6 +6,27 @@ import (
 	"ss/network"
 )
 
+func GetAnswerFor(items []string, bio string) string {
+	start := "you are pretending to be a human. Their biography is " + bio +
+		` Using the history of what was said before and your biography, make a short reply as the human "you are pretnending to be, speak in the first person as them.`
+
+	internal := items
+	visible := items
+	history := map[string]any{"internal": internal, "visible": visible}
+
+	m := map[string]any{"model": "ggml-vic7b-uncensored-q5_0.bin",
+		"_continue":  false,
+		"history":    history,
+		"user_input": start}
+	jsonString, code := network.PostTo("http://127.0.0.1:5000/api/v1/chat",
+		"", m)
+	if code != 200 {
+		fmt.Println(jsonString, code)
+		return ""
+	}
+	return parseJson(jsonString)
+}
+
 func SlackMessageFromBio(bio string) string {
 	payload := makePayloadForBio(bio)
 	jsonString, code := network.PostTo("http://127.0.0.1:5000/api/v1/chat",

@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
+	"ss/external/oobabooga"
 	"ss/external/slack"
 
 	"github.com/andrewarrow/feedback/router"
@@ -31,6 +33,7 @@ func Connect(socketURL, appId string, c *router.Context) *SystemWs {
 }
 
 func readMessages(conn *websocket.Conn, c *router.Context) {
+	users := c.All("user", "order by id", "")
 	for {
 		_, message, err := conn.ReadMessage()
 		if err != nil {
@@ -50,19 +53,26 @@ func readMessages(conn *websocket.Conn, c *router.Context) {
 			if eventFlavor == "message" {
 				user := event["user"].(string)
 				channel := event["channel"].(string)
-				go handleNewMessage(user, channel)
+				go handleNewMessage(user, channel, users)
 			}
 		}
 	}
 }
 
-func handleNewMessage(user, channel string) {
+func handleNewMessage(user, channel string, users []map[string]any) {
+	if user != "U05G6HWQB7V" {
+		return
+	}
 	jsonString := slack.GetHistory(channel)
-	parseSlackHistoryJson(jsonString)
-	// messages
+	items := parseSlackHistoryJson(jsonString)
+
+	theUser := users[rand.Intn(len(users))]
+
+	a := oobabooga.GetAnswerFor(items, theUser["bio"].(string))
+	slack.PostMessage(theUser["slack_token"].(string), channel, a)
 }
 
-func parseSlackHistoryJson(jsonString string) {
+func parseSlackHistoryJson(jsonString string) []string {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println("Recovered from panic:", r)
@@ -72,12 +82,14 @@ func parseSlackHistoryJson(jsonString string) {
 	json.Unmarshal([]byte(jsonString), &m)
 	//fmt.Println(jsonString)
 
+	buffer := []string{}
 	messages := m["messages"].([]any)
 	for _, thing := range messages {
 		message := thing.(map[string]any)
 		text := message["text"].(string)
-		fmt.Println(text)
+		buffer = append(buffer, text)
 	}
+	return buffer
 }
 
 func parseSlackSocketJson(jsonString string) (map[string]any, string) {
