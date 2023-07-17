@@ -7,21 +7,17 @@ import (
 )
 
 func GetAnswerFor(history []string, bio string) string {
-	start := "you are pretending to be a human. Their biography is " + bio +
-		` Using your biography, make a short reply as the human you are pretnending to be, speak in the first person as them.`
-
-	items := []string{history[0]}
-	fmt.Println(items)
-	internal := []any{items}
-	visible := []any{items}
+	start := "you are pretending to be a human. Their biography is ### " + bio
+	q := start + " ### " + "Make a short, less than 100 words, slack message from the human you are pretending to be and use the last thing said in the conversation: ### " + history[0] + " ### "
+	internal := []any{}
+	visible := []any{}
 	historyMap := map[string]any{"internal": internal, "visible": visible}
 
 	m := map[string]any{"model": "ggml-vic7b-uncensored-q5_0.bin",
 		"_continue":  false,
 		"history":    historyMap,
-		"user_input": start}
+		"user_input": q}
 
-	fmt.Println(m)
 	jsonString, code := network.PostTo("http://127.0.0.1:5000/api/v1/chat",
 		"", m)
 	if code != 200 {
@@ -64,6 +60,6 @@ func parseJson(jsonString string) string {
 	choice := choices[0].(map[string]any)
 	history := choice["history"].(map[string]any)
 	visible := history["visible"].([]any)
-	list := visible[0].([]any)
+	list := visible[len(visible)-1].([]any)
 	return list[len(list)-1].(string)
 }
