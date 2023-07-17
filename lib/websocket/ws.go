@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"ss/external/slack"
 
 	"github.com/andrewarrow/feedback/router"
 	"github.com/gorilla/websocket"
@@ -38,8 +37,19 @@ func readMessages(conn *websocket.Conn, c *router.Context) {
 			return
 		}
 		jsonString := string(message)
-		user, channel := parseSlackSocketJson(jsonString)
-		go handleNewMessage(user, channel)
+		event := parseSlackSocketJson(jsonString)
+		eventId := event["event_id"].(string)
+		c.Params = map[string]any{}
+		c.Params["id_event"] = eventId
+		msg := c.Insert("slack_event")
+		if msg == "" {
+			eventFlavor := event["type"].(string)
+			if eventFlavor == "message" {
+				user := event["user"].(string)
+				channel := event["channel"].(string)
+				go handleNewMessage(user, channel)
+			}
+		}
 	}
 }
 
@@ -47,10 +57,10 @@ func handleNewMessage(user, channel string) {
 	if user == "" {
 		return
 	}
-	slack.GetHistory(channel)
+	//slack.GetHistory(channel)
 }
 
-func parseSlackSocketJson(jsonString string) (string, string) {
+func parseSlackSocketJson(jsonString string) map[string]any {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println("Recovered from panic:", r)
@@ -58,17 +68,13 @@ func parseSlackSocketJson(jsonString string) (string, string) {
 	}()
 	var m map[string]any
 	json.Unmarshal([]byte(jsonString), &m)
+	fmt.Println(jsonString)
 
 	flavor := m["type"].(string)
 	if flavor == "events_api" {
 		payload := m["payload"].(map[string]any)
 		event := payload["event"].(map[string]any)
-		eventFlavor := event["type"].(string)
-		if eventFlavor == "message" {
-			user := event["user"].(string)
-			channel := event["channel"].(string)
-			return user, channel
-		}
+		return event
 	}
-	return "", ""
+	return nil
 }

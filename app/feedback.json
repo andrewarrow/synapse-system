@@ -80,6 +80,16 @@
       ]
     },
     {
+      "name": "slack_event",
+      "fields": [
+        {
+          "name": "id_event",
+          "flavor": "name",
+          "index": "unique"
+        }
+      ]
+    },
+    {
       "name": "cookie_token",
       "fields": [
         {
