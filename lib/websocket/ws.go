@@ -27,17 +27,20 @@ func Connect(socketURL, appId string, c *router.Context) *SystemWs {
 	}
 	s.AppId = appId
 
-	go readMessages(s.Conn, c)
+	go s.readMessages(c)
 
 	return &s
 }
 
-func readMessages(conn *websocket.Conn, c *router.Context) {
+func (s *SystemWs) readMessages(c *router.Context) {
 	users := c.All("user", "order by id", "")
 	for {
-		_, message, err := conn.ReadMessage()
+		_, message, err := s.Conn.ReadMessage()
 		if err != nil {
 			log.Println("Failed to read message:", err)
+			s.Conn.Close()
+			wsUrl, appId := slack.ConnectionsOpen()
+			Connect(wsUrl, appId, c)
 			return
 		}
 		jsonString := string(message)
