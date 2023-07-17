@@ -65,10 +65,13 @@ func handleNewMessage(user, channel string, users []map[string]any) {
 	}
 	jsonString := slack.GetHistory(channel)
 	items := parseSlackHistoryJson(jsonString)
+	if len(items) == 0 {
+		return
+	}
 
 	theUser := users[rand.Intn(len(users))]
-
 	a := oobabooga.GetAnswerFor(items, theUser["bio"].(string))
+	fmt.Println("a", a)
 	slack.PostMessage(theUser["slack_token"].(string), channel, a)
 }
 

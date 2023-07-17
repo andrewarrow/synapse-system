@@ -6,18 +6,22 @@ import (
 	"ss/network"
 )
 
-func GetAnswerFor(items []string, bio string) string {
+func GetAnswerFor(history []string, bio string) string {
 	start := "you are pretending to be a human. Their biography is " + bio +
-		` Using the history of what was said before and your biography, make a short reply as the human "you are pretnending to be, speak in the first person as them.`
+		` Using your biography, make a short reply as the human you are pretnending to be, speak in the first person as them.`
 
-	internal := items
-	visible := items
-	history := map[string]any{"internal": internal, "visible": visible}
+	items := []string{history[0]}
+	fmt.Println(items)
+	internal := []any{items}
+	visible := []any{items}
+	historyMap := map[string]any{"internal": internal, "visible": visible}
 
 	m := map[string]any{"model": "ggml-vic7b-uncensored-q5_0.bin",
 		"_continue":  false,
-		"history":    history,
+		"history":    historyMap,
 		"user_input": start}
+
+	fmt.Println(m)
 	jsonString, code := network.PostTo("http://127.0.0.1:5000/api/v1/chat",
 		"", m)
 	if code != 200 {
@@ -50,7 +54,7 @@ func makePayloadForBio(bio string) map[string]any {
 func parseJson(jsonString string) string {
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Println("Recovered from panic:", r)
+			fmt.Println("Recovered from panic:", r, jsonString)
 		}
 	}()
 	var m map[string]any
